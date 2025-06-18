@@ -4,8 +4,8 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: vitePreprocess(),
-	// async flag
 	compilerOptions: {
+		// async flag
 		experimental: { async: true }
 	},
 	kit: {

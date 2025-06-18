@@ -22,7 +22,7 @@ let todos: Todo[] = []
 		and `refresh` for refetching the data
 	- cached in memory for as long as they're actively used
 	- refreshing or overriding a query will update every
-		occurence	of it on the page
+		occurence of it on the page
 */
 export const getTodos = query(async () => {
 	return todos
@@ -32,7 +32,7 @@ export const getTodos = query(async () => {
 	forms are the preferred way to write data to the server:
 	- the form object has properties like `method`, `action` and `onsubmit`
 		that can be spread onto a `<form>` element for progressive enhancement
-	- all the queries on the page are automatically refreshed after a	form submission
+	- all the queries on the page are automatically refreshed after a form submission
 	- there's also properties like `result` containing the return values and
 		`enhance` to customize how the form is progressively enhanced
 */
@@ -50,6 +50,10 @@ export const deleteTodo = form(async (data) => {
 	const id = data.get('id') as string
 	const index = todos.findIndex((t) => t.id === id)
 	if (index === -1) error(404, 'Todo not found')
+
+	// only for demonstration
+	if (Math.random() < 0.2) error(500, 'This is a random error when deleting a todo! 🎉')
+
 	todos.splice(index, 1)
 })
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { addTodo, deleteTodo, getTodos, toggleTodo } from './todos.remote'
 
-	// this behaves like a regular function
+	// this behaves like a regular function but uses RPC
 	const todos = getTodos()
 </script>
 
@@ -86,6 +86,10 @@
 						}
 					})}
 				>
+					<!-- this seems to have bugs 🐛  -->
+					{#if remove.error}
+						<span class="error">{remove.error.message}</span>
+					{/if}
 					<button name="id" value={todo.id}>Delete</button>
 				</form>
 			</li>
