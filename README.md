@@ -1,38 +1,25 @@
-# sv
+# Svelte Remote Functions
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Svelte recently announced a [proposal for remote functions](https://github.com/sveltejs/kit/discussions/13897) that's meant to be an alternative to `load` functions in SvelteKit aimed to solve component-level data loading.
 
-## Creating a project
+This repo includes the code example from [https://github.com/dummdidumm/svelte-async-remote-functions-example](https://github.com/dummdidumm/svelte-async-remote-functions-example), the [Svelte async PR](https://github.com/sveltejs/svelte/pull/15844) and [SvelteKit RPC branch](https://github.com/sveltejs/kit/tree/rpc-ssr-2) until the PR is out.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Getting Started
 
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+🧑‍🤝‍🧑 Clone the repo:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+git clone https://github.com/mattcroat/svelte-rpc-example.git
 ```
 
-## Building
-
-To create a production version of your app:
+📦️ Install dependencies:
 
 ```bash
-npm run build
+pnpm i
 ```
 
-You can preview the production build with `npm run preview`.
+💽 Run development server:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+pnpm dev
+```
