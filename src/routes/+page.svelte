@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { addTodo, deleteTodo, getTodos, toggleTodo, updateTodo } from './todos.remote'
+	import {
+		addTodo,
+		deleteTodo,
+		getTodos,
+		toggleTodo,
+		updateTodo,
+		toggleEditing
+	} from './todos.remote'
 
 	// this behaves like a regular function but uses RPC
 	const todos = getTodos()
@@ -64,28 +71,32 @@
 							}
 						}}
 					/>
-					<span class={{ done: todo.done }}>{todo.text}</span>
-					<input type="text"
-						value={todo.text}
-						onchange={async (e) => {
-							const target = e.target as HTMLInputElement | null;
-							const text = target ? target.value.trim() : '';
+					{#if !todo.editing}
+						<span class={{ done: todo.done }}>{todo.text}</span>
+					{:else}
+						<input
+							type="text"
+							value={todo.text}
+							onchange={async (e) => {
+								const target = e.target as HTMLInputElement | null
+								const text = target ? target.value.trim() : ''
 
-							// optimistic UI update
-							const release = await todos.override((todos) => {
-								return todos.map((t) => (t.id === todo.id ? { ...t, text } : t))
-							})
+								// optimistic UI update
+								const release = await todos.override((todos) => {
+									return todos.map((t) => (t.id === todo.id ? { ...t, text } : t))
+								})
 
-							try {
-								await updateTodo(todo.id, text)
-								// here `updateTodo` doesn't do a single flight mutation, so we refresh on the client
-								await todos.refresh()
-							} finally {
-								// remove override
-								release()
-							}
-						}}
-				/>
+								try {
+									await updateTodo(todo.id, text)
+									// here `updateTodo` doesn't do a single flight mutation, so we refresh on the client
+									await todos.refresh()
+								} finally {
+									// remove override
+									release()
+								}
+							}}
+						/>
+					{/if}
 				</label>
 
 				<!-- using enhance to customize how the form is progressively enhanced -->
@@ -111,6 +122,26 @@
 					{#if remove.error}
 						<span class="error">{remove.error.message}</span>
 					{/if}
+					<!-- toggleEditing btn -->
+					<button
+						type="button"
+						onclick={async () => {
+							const release = await todos.override((todos) => {
+								return todos.map((t) => (t.id === todo.id ? { ...t, editing: !t.editing } : t))
+							})
+
+							try {
+								await toggleEditing(todo.id)
+								// here `toggleEditing` doesn't do a single flight mutation, so we refresh on the client
+								await todos.refresh()
+							} finally {
+								// remove override
+								release()
+							}
+						}}
+					>
+						Edit
+					</button>
 					<button name="id" value={todo.id}>Delete</button>
 				</form>
 			</li>
@@ -119,6 +150,24 @@
 </main>
 
 <style>
+	main {
+		/* min-width: 600px; */
+		margin: 0 auto;
+		padding: 1rem;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+	}
+	li {
+		display: grid;
+		align-items: center;
+		grid-template-columns: 1fr auto;
+		gap: 1rem;
+		padding: 1rem 0;
+	}
+
 	.done {
 		text-decoration: line-through;
 	}

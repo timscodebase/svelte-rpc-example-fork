@@ -10,6 +10,7 @@ type Todo = {
 	id: string
 	text: string
 	done: boolean
+	editing?: boolean
 }
 
 let todos: Todo[] = []
@@ -80,9 +81,22 @@ export const updateTodo = command(async (id: string, text: string) => {
 	const todo = todos.find((t) => t.id === id)
 	if (!todo) error(404, 'Todo not found')
 	if (!text) error(400, 'Todo text cannot be empty')
+	todo.editing = true
 
 	// simulate optimistic UI updates
 	await new Promise((resolve) => setTimeout(resolve, 2000))
 
 	todo.text = text
+	todo.editing = false
+})
+
+// Mark: toggleEditing
+export const toggleEditing = command(async (id: string) => {
+	const todo = todos.find((t) => t.id === id)
+	if (!todo) error(404, 'Todo not found')
+
+	// simulate optimistic UI updates
+	await new Promise((resolve) => setTimeout(resolve, 2000))
+
+	todo.editing = !todo.editing
 })
