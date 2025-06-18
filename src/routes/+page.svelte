@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTodo, deleteTodo, getTodos, toggleTodo } from './todos.remote'
+	import { addTodo, deleteTodo, getTodos, toggleTodo, updateTodo } from './todos.remote'
 
 	// this behaves like a regular function but uses RPC
 	const todos = getTodos()
@@ -65,6 +65,27 @@
 						}}
 					/>
 					<span class={{ done: todo.done }}>{todo.text}</span>
+					<input type="text"
+						value={todo.text}
+						onchange={async (e) => {
+							const target = e.target as HTMLInputElement | null;
+							const text = target ? target.value.trim() : '';
+
+							// optimistic UI update
+							const release = await todos.override((todos) => {
+								return todos.map((t) => (t.id === todo.id ? { ...t, text } : t))
+							})
+
+							try {
+								await updateTodo(todo.id, text)
+								// here `updateTodo` doesn't do a single flight mutation, so we refresh on the client
+								await todos.refresh()
+							} finally {
+								// remove override
+								release()
+							}
+						}}
+				/>
 				</label>
 
 				<!-- using enhance to customize how the form is progressively enhanced -->

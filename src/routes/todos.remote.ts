@@ -24,6 +24,7 @@ let todos: Todo[] = []
 	- refreshing or overriding a query will update every
 		occurence of it on the page
 */
+//  MARK: getTodos
 export const getTodos = query(async () => {
 	return todos
 })
@@ -36,6 +37,7 @@ export const getTodos = query(async () => {
 	- there's also properties like `result` containing the return values and
 		`enhance` to customize how the form is progressively enhanced
 */
+// MARK: addTodo
 export const addTodo = form(async (data) => {
 	const text = data.get('text') as string
 	if (!text) error(400, 'Todo text cannot be empty')
@@ -46,6 +48,7 @@ export const addTodo = form(async (data) => {
 	await getTodos().refresh()
 })
 
+// MARK: deleteTodo
 export const deleteTodo = form(async (data) => {
 	const id = data.get('id') as string
 	const index = todos.findIndex((t) => t.id === id)
@@ -61,6 +64,7 @@ export const deleteTodo = form(async (data) => {
 	commands are an alternative way of writing data to the server
 	using JavaScript if you don't need progressive enhancement
 */
+// MARK: toggleTodo
 export const toggleTodo = command(async (id: string) => {
 	const todo = todos.find((t) => t.id === id)
 	if (!todo) error(404, 'Todo not found')
@@ -69,4 +73,16 @@ export const toggleTodo = command(async (id: string) => {
 	await new Promise((resolve) => setTimeout(resolve, 2000))
 
 	todo.done = !todo.done
+})
+
+// MARK: updateTodo
+export const updateTodo = command(async (id: string, text: string) => {
+	const todo = todos.find((t) => t.id === id)
+	if (!todo) error(404, 'Todo not found')
+	if (!text) error(400, 'Todo text cannot be empty')
+
+	// simulate optimistic UI updates
+	await new Promise((resolve) => setTimeout(resolve, 2000))
+
+	todo.text = text
 })
